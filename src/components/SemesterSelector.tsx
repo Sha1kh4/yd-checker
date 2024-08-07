@@ -2,7 +2,7 @@
 
 import React, { useState, ChangeEvent, useEffect, useRef } from 'react';
 import { creditData } from '../data/creditData'; 
-// Define types based on the structure of creditData
+
 interface SubjectDetails {
   name: string;
   credits: number;
@@ -14,14 +14,13 @@ interface CreditData {
   };
 }
 
-// Assuming creditData conforms to CreditData type
 const SemesterSelector: React.FC = () => {
   const [selectedSemester, setSelectedSemester] = useState<string>('');
   const [selectedSubjects, setSelectedSubjects] = useState<Record<string, boolean>>({});
-  const [imageSrc, setImageSrc] = useState<string>('/images/win.png');
-  const prevImageSrcRef = useRef<string>('/images/win.png');
+  const [imageSrc, setImageSrc] = useState<string>('images/win.png');
+  const prevImageSrcRef = useRef<string>('images/win.png');
+  const [audioSrc, setAudioSrc] = useState<string>('audio/win.mp3'); // Default audio
 
-  // Create a flat map of all subjects with their codes and credits
   const allSubjects = Object.values(creditData).flatMap((sem) =>
     Object.entries(sem)
   ).reduce<Record<string, SubjectDetails>>((acc, [code, details]) => {
@@ -46,7 +45,6 @@ const SemesterSelector: React.FC = () => {
 
   const semesters = Object.keys(creditData);
 
-  // Calculate total credits of selected subjects across all semesters
   const totalCredits = Object.entries(selectedSubjects).reduce((acc, [subjectCode, isSelected]) => {
     if (isSelected) {
       const subject = allSubjects[subjectCode];
@@ -55,20 +53,24 @@ const SemesterSelector: React.FC = () => {
     return acc;
   }, 0);
 
-  // Determine the image based on total credits
-  const newImageSrc = totalCredits > 18 ? '/images/Loss.png' : '/images/win.png';
+  const newImageSrc = totalCredits > 18 ? 'images/Loss.png' : 'images/win.png';
+  const newAudioSrc = totalCredits > 18 ? 'audio/loss.mp3' : 'audio/win.mp3';
 
   useEffect(() => {
-    // Compare previous and current image source
-    if (prevImageSrcRef.current !== newImageSrc) {
-      // Update previous image source
+    if (prevImageSrcRef.current !== newImageSrc || audioSrc !== newAudioSrc) {
       prevImageSrcRef.current = newImageSrc;
-
-      // Play the audio based on the new image source
-      const audio = new Audio('/audio/music.mp3');
-      audio.play();
+      setAudioSrc(newAudioSrc);
     }
-  }, [newImageSrc]);
+  }, [newImageSrc, newAudioSrc]);
+
+  useEffect(() => {
+    const audio = new Audio(audioSrc);
+    audio.play();
+  }, [audioSrc]);
+
+  const selectedSubjectsList = Object.entries(selectedSubjects)
+    .filter(([_, isSelected]) => isSelected)
+    .map(([subjectCode]) => allSubjects[subjectCode]);
 
   return (
     <div className="relative flex flex-col text-gray-700 bg-white shadow-md rounded-xl bg-clip-border p-4">
@@ -103,7 +105,7 @@ const SemesterSelector: React.FC = () => {
                 className="mr-2"
               />
               <label htmlFor={code} className="font-sans text-base antialiased font-medium text-blue-gray-900">
-                {name}
+                {name} ({allSubjects[code].credits} Credits)
               </label>
             </div>
           ))}
@@ -126,16 +128,26 @@ const SemesterSelector: React.FC = () => {
           alt={totalCredits > 18 ? 'High Credits' : 'Low Credits'}
           className="w-80 h-80 mx-auto"
         />
-              <br />
-      <footer className=" text-center  lg:text-left">
-      
-  <div className=" p-4 text-center text-surface">
-    <p>By and For MIT Batu Final year Students</p>
-    © {new Date().getFullYear()} Copyright:
-    <a href="https://sha1kh4.github.io/portfolio/">SKAD</a>
-  </div>
-</footer>
       </div>
+      {selectedSubjectsList.length > 0 && (
+        <div className="mt-4">
+          <p className="font-sans text-base antialiased font-medium text-blue-gray-900">Selected Subjects:</p>
+          <ul>
+            {selectedSubjectsList.map((subject, index) => (
+              <li key={index} className="font-sans text-base antialiased text-blue-gray-900">
+                {subject.name} ({subject.credits} Credits)
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <footer className=" text-center lg:text-left mt-4">
+        <div className=" p-4 text-center text-surface">
+          <p>By and For MIT Batu Final year Students</p>
+          © {new Date().getFullYear()} Copyright:
+          <a href="https://sha1kh4.github.io/portfolio/">SKAD</a>
+        </div>
+      </footer>
     </div>
   );
 };
