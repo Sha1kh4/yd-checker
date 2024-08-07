@@ -1,24 +1,13 @@
-
 # Sample workflow for building and deploying a Next.js site to GitHub Pages
 #
 # To get started with Next.js see: https://nextjs.org/docs/getting-started
 #
 name: Deploy Next.js site to Pages
-env:
-  NEXT_PUBLIC_apiKey : ${{ vars.NEXT_PUBLIC_apiKey }}
-  NEXT_PUBLIC_authDomain: ${{ vars.NEXT_PUBLIC_authDomain }}
-  NEXT_PUBLIC_databaseURL: ${{ vars.NEXT_PUBLIC_databaseURL }}
-  NEXT_PUBLIC_projectId: ${{ vars.NEXT_PUBLIC_projectId }}
-  NEXT_PUBLIC_storageBucket: ${{ vars.NEXT_PUBLIC_storageBucket }}
-  NEXT_PUBLIC_messagingSenderId: ${{ vars.NEXT_PUBLIC_messagingSenderId }}
-  NEXT_PUBLIC_appId: ${{ vars.NEXT_PUBLIC_appId }}
-  NEXT_PUBLIC_SPOTIFY_CLIENT_ID: ${{ vars.NEXT_PUBLIC_SPOTIFY_CLIENT_ID }}
-  NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET: ${{ vars.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET }}
-  NEXT_PUBLIC_SPOTIFY_REDIRECT_URI : ${{ vars.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI }}
+
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: [$default-branch]
+    branches: ["main"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -39,7 +28,6 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
-    environment: github-pages
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -86,7 +74,6 @@ jobs:
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
       - name: Build with Next.js
-
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
