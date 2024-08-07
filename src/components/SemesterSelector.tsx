@@ -1,8 +1,7 @@
-"use client"
+"use client";
 
-import React, { useState, ChangeEvent } from 'react';
-import { creditData } from '../data/creditData'; // Adjust the path if needed
-
+import React, { useState, ChangeEvent, useEffect, useRef } from 'react';
+import { creditData } from '../data/creditData'; 
 // Define types based on the structure of creditData
 interface SubjectDetails {
   name: string;
@@ -19,6 +18,8 @@ interface CreditData {
 const SemesterSelector: React.FC = () => {
   const [selectedSemester, setSelectedSemester] = useState<string>('');
   const [selectedSubjects, setSelectedSubjects] = useState<Record<string, boolean>>({});
+  const [imageSrc, setImageSrc] = useState<string>('/images/win.png');
+  const prevImageSrcRef = useRef<string>('/images/win.png');
 
   // Create a flat map of all subjects with their codes and credits
   const allSubjects = Object.values(creditData).flatMap((sem) =>
@@ -54,12 +55,25 @@ const SemesterSelector: React.FC = () => {
     return acc;
   }, 0);
 
-  // Determine the message based on total credits
-  const message = totalCredits > 18 ? 'Gaya' : 'bach gya';
+  // Determine the image based on total credits
+  const newImageSrc = totalCredits > 18 ? '/images/Loss.png' : '/images/win.png';
+
+  useEffect(() => {
+    // Compare previous and current image source
+    if (prevImageSrcRef.current !== newImageSrc) {
+      // Update previous image source
+      prevImageSrcRef.current = newImageSrc;
+
+      // Play the audio based on the new image source
+      const audio = new Audio('/audio/music.mp3');
+      audio.play();
+    }
+  }, [newImageSrc]);
 
   return (
     <div className="relative flex flex-col text-gray-700 bg-white shadow-md rounded-xl bg-clip-border p-4">
       <div className="mb-4">
+        <p className="font-sans text font-bold text-blue-gray-900">Select all backlog Subjects</p>
         <label htmlFor="semester" className="block text-blue-gray-900 font-sans text-base font-medium mb-2">
           Select Semester:
         </label>
@@ -107,9 +121,20 @@ const SemesterSelector: React.FC = () => {
         </button>
       </div>
       <div className="mt-4">
-        <p className="font-sans text-lg antialiased font-bold text-blue-gray-900">
-          {message}
-        </p>
+        <img
+          src={newImageSrc}
+          alt={totalCredits > 18 ? 'High Credits' : 'Low Credits'}
+          className="w-80 h-80 mx-auto"
+        />
+              <br />
+      <footer className=" text-center  lg:text-left">
+      
+  <div className=" p-4 text-center text-surface">
+    <p>By and For MIT Batu Final year Students</p>
+    © {new Date().getFullYear()} Copyright:
+    <a href="https://sha1kh4.github.io/portfolio/">SKAD</a>
+  </div>
+</footer>
       </div>
     </div>
   );
