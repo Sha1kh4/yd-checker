@@ -53,7 +53,7 @@ const SemesterSelector: React.FC = () => {
     return acc;
   }, 0);
 
-  const newImageSrc = totalCredits > 18 ? 'images/Loss.png' : 'images/win.png';
+  const newImageSrc = totalCredits > 18 ? 'images/loss.png' : 'images/win.png';
   const newAudioSrc = totalCredits > 18 ? 'audio/loss.mp3' : 'audio/win.mp3';
 
   useEffect(() => {
