@@ -18,8 +18,8 @@ interface CreditData {
 const SemesterSelector: React.FC = () => {
   const [selectedSemester, setSelectedSemester] = useState<string>('');
   const [selectedSubjects, setSelectedSubjects] = useState<Record<string, boolean>>({});
-  const [imageSrc, setImageSrc] = useState<string>('images/win.png');
-  const prevImageSrcRef = useRef<string>('images/win.png');
+  const [imageSrc, setImageSrc] = useState<string>('images/Win.png');
+  const prevImageSrcRef = useRef<string>('images/Win.png');
 
   // Create a flat map of all subjects with their codes and credits
   const allSubjects = Object.values(creditData).flatMap((sem) =>
@@ -56,7 +56,7 @@ const SemesterSelector: React.FC = () => {
   }, 0);
 
   // Determine the image based on total credits
-  const newImageSrc = totalCredits > 18 ? 'images/Loss.png' : 'images/win.png';
+  const newImageSrc = totalCredits > 18 ? 'images/Loss.png' : 'images/Win.png';
 
   useEffect(() => {
     // Compare previous and current image source
