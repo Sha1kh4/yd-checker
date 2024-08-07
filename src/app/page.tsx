@@ -3,7 +3,7 @@ import SemesterSelector from '../components/SemesterSelector'; // Adjust the pat
 
 const Home = () => (
   <>
-    <h1>Course Selection</h1>
+    <h1 className='flex flex-row  justify-center items-center h-10'>YD checker</h1>
     <SemesterSelector />
   </>
 );
