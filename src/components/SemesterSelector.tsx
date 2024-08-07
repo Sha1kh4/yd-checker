@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, ChangeEvent, useEffect, useRef } from 'react';
+import React, { useState,ChangeEvent, useEffect, useRef } from 'react';
 import { creditData } from '../data/creditData'; 
-
+import Image from 'next/image';
 interface SubjectDetails {
   name: string;
   credits: number;
@@ -123,7 +123,7 @@ const SemesterSelector: React.FC = () => {
         </button>
       </div>
       <div className="mt-4">
-        <img
+        <Image
           src={newImageSrc}
           alt={totalCredits > 18 ? 'High Credits' : 'Low Credits'}
           className="w-80 h-80 mx-auto"
