@@ -2,7 +2,6 @@
 
 import React, { useState,ChangeEvent, useEffect, useRef } from 'react';
 import { creditData } from '../data/creditData'; 
-import Image from 'next/image';
 interface SubjectDetails {
   name: string;
   credits: number;
@@ -20,6 +19,7 @@ const SemesterSelector: React.FC = () => {
   const [imageSrc, setImageSrc] = useState<string>('images/Win.png');
   const prevImageSrcRef = useRef<string>('images/Win.png');
   const [audioSrc, setAudioSrc] = useState<string>('audio/win.mp3'); // Default audio
+  const [submitted, setSubmitted] = useState<boolean>(false); // Track submission status
 
   const allSubjects = Object.values(creditData).flatMap((sem) =>
     Object.entries(sem)
@@ -43,6 +43,10 @@ const SemesterSelector: React.FC = () => {
     setSelectedSubjects({});
   };
 
+  const handleSubmit = () => {
+    setSubmitted(true); // Mark as submitted
+  };
+
   const semesters = Object.keys(creditData);
 
   const totalCredits = Object.entries(selectedSubjects).reduce((acc, [subjectCode, isSelected]) => {
@@ -64,9 +68,11 @@ const SemesterSelector: React.FC = () => {
   }, [newImageSrc, newAudioSrc]);
 
   useEffect(() => {
-    const audio = new Audio(audioSrc);
-    audio.play();
-  }, [audioSrc]);
+    if (submitted) {
+      const audio = new Audio(audioSrc);
+      audio.play();
+    }
+  }, [audioSrc, submitted]);
 
   const selectedSubjectsList = Object.entries(selectedSubjects)
     .filter(([_, isSelected]) => isSelected)
@@ -94,41 +100,52 @@ const SemesterSelector: React.FC = () => {
         </select>
       </div>
       {selectedSemester && (
-        <div>
-          {Object.entries(creditData[selectedSemester as keyof CreditData] || {}).map(([code, { name }]) => (
-            <div key={code} className="flex items-center mb-2">
-              <input
-                type="checkbox"
-                id={code}
-                checked={selectedSubjects[code] || false}
-                onChange={() => handleCheckboxChange(code)}
-                className="mr-2"
-              />
-              <label htmlFor={code} className="font-sans text-base antialiased font-medium text-blue-gray-900">
-                {name} ({allSubjects[code].credits} Credits)
-              </label>
+        <div className="flex flex-col md:flex-row md:items-start">
+          <div className="md:w-1/2">
+            {Object.entries(creditData[selectedSemester as keyof CreditData] || {}).map(([code, { name }]) => (
+              <div key={code} className="flex items-center mb-2">
+                <input
+                  type="checkbox"
+                  id={code}
+                  checked={selectedSubjects[code] || false}
+                  onChange={() => handleCheckboxChange(code)}
+                  className="mr-2"
+                />
+                <label htmlFor={code} className="font-sans text-base antialiased font-medium text-blue-gray-900">
+                  {name} ({allSubjects[code].credits} Credits)
+                </label>
+              </div>
+            ))}
+            <div className="mt-4 flex items-center gap-4">
+              <p className="font-sans text-base antialiased font-medium text-blue-gray-900">
+                Total Credits of Selected Subjects: {totalCredits}
+              </p>
+              <button
+                onClick={handleClearSelections}
+                className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+              >
+                Clear Selections
+              </button>
+              <button
+                onClick={handleSubmit}
+                className="p-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+              >
+                Submit
+              </button>
             </div>
-          ))}
+          </div>
+          {submitted && (
+            <div className="md:w-1/2 mt-4 md:mt-0 md:ml-4 flex justify-center items-center">
+              <img
+                src={newImageSrc}
+                alt={totalCredits > 18 ? 'High Credits' : 'Low Credits'}
+                
+                className="w-80 h-80 mx-auto" // Maintain aspect ratio
+              />
+            </div>
+          )}
         </div>
       )}
-      <div className="mt-4 flex items-center gap-4">
-        <p className="font-sans text-base antialiased font-medium text-blue-gray-900">
-          Total Credits of Selected Subjects: {totalCredits}
-        </p>
-        <button
-          onClick={handleClearSelections}
-          className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-        >
-          Clear Selections
-        </button>
-      </div>
-      <div className="mt-4">
-        <Image
-          src={newImageSrc}
-          alt={totalCredits > 18 ? 'High Credits' : 'Low Credits'}
-          className="w-80 h-80 mx-auto"
-        />
-      </div>
       {selectedSubjectsList.length > 0 && (
         <div className="mt-4">
           <p className="font-sans text-base antialiased font-medium text-blue-gray-900">Selected Subjects:</p>
