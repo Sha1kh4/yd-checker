@@ -16,8 +16,8 @@ interface CreditData {
 const SemesterSelector: React.FC = () => {
   const [selectedSemester, setSelectedSemester] = useState<string>('');
   const [selectedSubjects, setSelectedSubjects] = useState<Record<string, boolean>>({});
-  const [imageSrc, setImageSrc] = useState<string>('images/Win.png');
-  const prevImageSrcRef = useRef<string>('images/Win.png');
+  const [imageSrc, setImageSrc] = useState<string>('media/Win.gif'); 
+  const prevImageSrcRef = useRef<string>('media/Win.gif');
   const [audioSrc, setAudioSrc] = useState<string>('audio/win.mp3'); // Default audio
   const [submitted, setSubmitted] = useState<boolean>(false); // Track submission status
 
@@ -57,7 +57,7 @@ const SemesterSelector: React.FC = () => {
     return acc;
   }, 0);
 
-  const newImageSrc = totalCredits > 18 ? 'images/Loss.png' : 'images/Win.png';
+  const newImageSrc = totalCredits > 18 ? 'media/Loss.webp' : 'media/Win.gif';
   const newAudioSrc = totalCredits > 18 ? 'audio/loss.mp3' : 'audio/win.mp3';
 
   useEffect(() => {
